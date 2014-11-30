@@ -46,3 +46,13 @@ UI still not arranged. Still no phasers.
 Third checkin was also dated 02/18/2012
 
 "jstrek after mission, difficulty level, victory detection"
+
+
+Fourth checkin was dated 02/25/2012
+
+
+"jstrek after adding GUI positioning, map highlight, phasers, and multi-message"
+
+First PLAYABLE version.
+Apparently not playable with IE (perhaps my screen resolution was different back then???)
+

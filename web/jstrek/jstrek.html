@@ -156,64 +156,6 @@
       </tr>
     </table>
 
-    <!-- LRS - Long Range Scanner -->
-    <table id = 'lrs' class = 'lrs'>
-      <caption>Long Range Scanner</caption>
-      <tr>
-        <td id = 'lrs00'>000</td>
-        <td id = 'lrs01'>000</td>
-        <td id = 'lrs02'>000</td>
-      </tr>
-      <tr>
-        <td id = 'lrs10'>000</td>
-        <td id = 'lrs11'>000</td>
-        <td id = 'lrs12'>000</td>
-      </tr>
-      <tr>
-        <td id = 'lrs20'>000</td>
-        <td id = 'lrs21'>000</td>
-        <td id = 'lrs22'>000</td>
-      </tr>
-    </table>
-
-    <!-- STATUS - Status Display -->
-    <table id = 'status' class = 'status'>
-      <caption>Ship Status</caption>
-      <tr>
-        <td>Quadrant</td>
-        <td id = 'quadrant'>0-0</td>
-      </tr>
-      <tr>
-        <td>Sector</td>
-        <td id = 'sector'>0-0</td>
-      </tr>
-      <tr>
-        <td>Energy</td>
-        <td id = 'energy'>0000</td>
-      </tr>
-      <tr>
-        <td>Shields</td>
-        <td id = 'shields'>0000</td>
-      </tr>
-      <tr>
-        <td>Torpedos</td>
-        <td id = 'torpedos'>0</td>
-      </tr>
-    </table>
-
-    <!-- MISSION - Mission Status Display -->
-    <table id = 'mission' class = 'mission'>
-      <caption>Mission Status</caption>
-      <tr>
-        <td>Destroyed</td>
-        <td id = 'destroyed'>000</td>
-      </tr>
-      <tr>
-        <td>Remaining</td>
-        <td id = 'remaining'>000</td>
-      </tr>
-    </table>
-
     <!-- SRS - Short Range Scanner -->
     <table id = 'srs' class = 'srs'>
       <caption>Short Range Scanner</caption>
@@ -339,26 +281,6 @@
       </tr>
     </table>
 
-    <!-- TORPEDO - Photon Torpedo Fire Control -->
-    <table id = 'torpedo' class = 'impulse'>
-      <caption>Photon Torpedo</caption>
-      <tr>
-        <td><input type = "button" value = "UP-LEFT" onClick = "torpedoHandler('up-left')" /></td>
-        <td><input type = "button" value = "UP" onClick = "torpedoHandler('up')" /></td>
-        <td><input type = "button" value = "UP-RIGHT" onClick = "torpedoHandler('up-right')" /></td>
-      </tr>
-      <tr>
-        <td><input type = "button" value = "LEFT" onClick = "torpedoHandler('left')" /></td>
-        <td><input type = "button" value = "STOP" onClick = "torpedoHandler('stop')" /></td>
-        <td><input type = "button" value = "RIGHT" onClick = "torpedoHandler('right')" /></td>
-      </tr>
-      <tr>
-        <td><input type = "button" value = "DOWN-LEFT" onClick = "torpedoHandler('down-left')" /></td>
-        <td><input type = "button" value = "DOWN" onClick = "torpedoHandler('down')" /></td>
-        <td><input type = "button" value = "DOWN-RIGHT" onClick = "torpedoHandler('down-right')" /></td>
-      </tr>
-    </table>
-
     <!-- IMPULSE - Impulse Engine Control -->
     <table id = 'impulse' class = 'impulse'>
       <caption>Impulse Engines</caption>
@@ -379,20 +301,106 @@
       </tr>
     </table>
 
+    <!-- TORPEDO - Photon Torpedo Fire Control -->
+    <table id = 'torpedo' class = 'impulse'>
+      <caption>Photon Torpedo</caption>
+      <tr>
+        <td><input type = "button" value = "UP-LEFT" onClick = "torpedoHandler('up-left')" /></td>
+        <td><input type = "button" value = "UP" onClick = "torpedoHandler('up')" /></td>
+        <td><input type = "button" value = "UP-RIGHT" onClick = "torpedoHandler('up-right')" /></td>
+      </tr>
+      <tr>
+        <td><input type = "button" value = "LEFT" onClick = "torpedoHandler('left')" /></td>
+        <td><input type = "button" value = "PHASERS" onClick = "phaserHandler()" /></td>
+        <td><input type = "button" value = "RIGHT" onClick = "torpedoHandler('right')" /></td>
+      </tr>
+      <tr>
+        <td><input type = "button" value = "DOWN-LEFT" onClick = "torpedoHandler('down-left')" /></td>
+        <td><input type = "button" value = "DOWN" onClick = "torpedoHandler('down')" /></td>
+        <td><input type = "button" value = "DOWN-RIGHT" onClick = "torpedoHandler('down-right')" /></td>
+      </tr>
+    </table>
+
+    <!-- MISSION - Mission Status Display -->
+    <table id = 'mission' class = 'mission'>
+      <caption>Mission Status</caption>
+      <tr>
+        <td>Destroyed</td>
+        <td id = 'destroyed'>000</td>
+      </tr>
+      <tr>
+        <td>Remaining</td>
+        <td id = 'remaining'>000</td>
+      </tr>
+    </table>
+
+    <!-- STATUS - Status Display -->
+    <table id = 'status' class = 'status'>
+      <caption>Ship Status</caption>
+      <tr>
+        <td>Quadrant</td>
+        <td id = 'quadrant'>0-0</td>
+      </tr>
+      <tr>
+        <td>Sector</td>
+        <td id = 'sector'>0-0</td>
+      </tr>
+      <tr>
+        <td>Energy</td>
+        <td id = 'energy'>0000</td>
+      </tr>
+      <tr>
+        <td>Shields</td>
+        <td id = 'shields'>0000</td>
+      </tr>
+      <tr>
+        <td>Torpedos</td>
+        <td id = 'torpedos'>0</td>
+      </tr>
+    </table>
+
+    <!-- LRS - Long Range Scanner -->
+    <table id = 'lrs' class = 'lrs'>
+      <caption>Long Range Scanner</caption>
+      <tr>
+        <td id = 'lrs00'>000</td>
+        <td id = 'lrs01'>000</td>
+        <td id = 'lrs02'>000</td>
+      </tr>
+      <tr>
+        <td id = 'lrs10'>000</td>
+        <td id = 'lrs11'>000</td>
+        <td id = 'lrs12'>000</td>
+      </tr>
+      <tr>
+        <td id = 'lrs20'>000</td>
+        <td id = 'lrs21'>000</td>
+        <td id = 'lrs22'>000</td>
+      </tr>
+    </table>
+
     <formaction = "">
+      <div id = "message4" class = "message"></div>
+      <div id = "message3" class = "message"></div>
+      <div id = "message2" class = "message"></div>
+      <div id = "message1" class = "message"></div>
       <div id = "message" class = "message">Click a [Difficulty Level] To Start</div>
     </form>
 
-    <input type = "button" value = "Cadet" onClick = "newGame(1)" />
-    <input type = "button" value = "Ensign" onClick = "newGame(2)" />
-    <input type = "button" value = "Captain" onClick = "newGame(3)" />
-    <input type = "button" value = "Commodore" onClick = "newGame(5)" />
-    <input type = "button" value = "Admiral" onClick = "newGame(7)" />
-    <input type = "button" value = "Insane" onClick = "newGame(9)" />
+    <div id='buttons'>
 
-    <input type = "button" value = "LRS" onClick = "longRangeScan()" />
+      <input type = "button" value = "Cadet" onClick = "newGame(1)" />
+      <input type = "button" value = "Ensign" onClick = "newGame(2)" />
+      <input type = "button" value = "Captain" onClick = "newGame(3)" />
+      <input type = "button" value = "Commodore" onClick = "newGame(5)" />
+      <input type = "button" value = "Admiral" onClick = "newGame(7)" />
+      <input type = "button" value = "Kobyashi Maru" onClick = "newGame(9)" />
 
-    <input type = "button" value = "DOCK" onClick = "attemptDocking()" />
+      <input type = "button" value = "LRS" onClick = "longRangeScan()" />
+
+      <input type = "button" value = "DOCK" onClick = "attemptDocking()" />
+
+    </div>
 
   </body>
 </html>

@@ -1,8 +1,9 @@
-div.message { color: red }
-
 table#map
 {
   border-collapse:collapse;
+  position: absolute;
+  top: 0px;
+  left: 0px;
 }
 table#map caption
 {
@@ -16,95 +17,17 @@ table#map td
   text-align:center;
   width:4ex;
 }
-
-table#lrs
+table#map td.highlighted_map
 {
-  border-collapse:collapse;
-}
-table#lrs caption
-{
-  border: solid black 1px;
-  color: blue
-}
-table#lrs td
-{
-  border: solid black 1px;
-  color: green;
-  text-align:center;
-  width:4ex;
-}
-
-table#srs
-{
-  border-collapse:collapse;
-}
-table#srs caption
-{
-  border: solid black 1px;
-  color: blue
-}
-table#srs td
-{
-  border: solid black 1px;
-  color: green;
-  text-align:center;
-  width:3ex;
-}
-
-table#status
-{
-  border-collapse:collapse;
-}
-table#status caption
-{
-  border: solid black 1px;
-  color: blue
-}
-table#status td
-{
-  border: solid black 1px;
-  color: green;
-  text-align:center;
-  width:3ex;
-}
-
-table#mission
-{
-  border-collapse:collapse;
-}
-table#mission caption
-{
-  border: solid black 1px;
-  color: blue
-}
-table#mission td
-{
-  border: solid black 1px;
-  color: green;
-  text-align:center;
-  width:3ex;
-}
-
-table#impulse
-{
-  border-collapse:collapse;
-}
-table#impulse caption
-{
-  border: solid black 1px;
-  color: blue
-}
-table#impulse td
-{
-  border: solid black 1px;
-  color: green;
-  text-align:center;
-  width:3ex;
+  color: blue;
 }
 
 table#warp
 {
   border-collapse:collapse;
+  position: absolute;
+  top: 260px;
+  left: 0px;
 }
 table#warp caption
 {
@@ -119,9 +42,52 @@ table#warp td
   width:3ex;
 }
 
+table#srs
+{
+  border-collapse:collapse;
+  position: absolute;
+  top: 0px;
+  left: 403px;
+}
+table#srs caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#srs td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:3ex;
+}
+
+table#impulse
+{
+  border-collapse:collapse;
+  position: absolute;
+  top: 260px;
+  left: 394px;
+}
+table#impulse caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#impulse td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:3ex;
+}
+
 table#torpedo
 {
   border-collapse:collapse;
+  position: absolute;
+  top: 260px;
+  left: 667px;
 }
 table#torpedo caption
 {
@@ -135,3 +101,111 @@ table#torpedo td
   text-align:center;
   width:3ex;
 }
+
+table#mission
+{
+  border-collapse:collapse;
+  position: absolute;
+  top: 0px;
+  left: 713px;
+}
+table#mission caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#mission td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:3ex;
+}
+
+table#status
+{
+  border-collapse:collapse;
+  position: absolute;
+  top: 72px;
+  left: 713px;
+}
+table#status caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#status td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:3ex;
+}
+
+table#lrs
+{
+  border-collapse:collapse;
+  position: absolute;
+  top: 260px;
+  left: 272px;
+}
+table#lrs caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#lrs td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:4ex;
+}
+
+div#message4
+{
+  color: red;
+  position: absolute;
+  top: 375px;
+  left: 0px;
+}
+
+div#message3
+{
+  color: red;
+  position: absolute;
+  top: 395px;
+  left: 0px;
+}
+
+div#message2
+{
+  color: red;
+  position: absolute;
+  top: 415px;
+  left: 0px;
+}
+
+div#message1
+{
+  color: red;
+  position: absolute;
+  top: 435px;
+  left: 0px;
+}
+
+div#message
+{
+  color: red;
+  position: absolute;
+  top: 455px;
+  left: 0px;
+}
+
+div#buttons
+{
+  position: absolute;
+  top: 477px;
+  left: 0px;
+}
+

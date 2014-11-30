@@ -7,10 +7,13 @@
         }
       }; 
 
+      HIGHLIGHTED_GALACTIC_MAP_CLASS = 'highlighted_map';
+      NORMAL_GALACTIC_MAP_CLASS = '';
 
       EMPTY_SECTOR = ' . ';
       TORPEDO = ' + ';
       KLINGON = ' >-';
+      //KLINGON = '[ ]';
       ENTERPRISE = ']O ';
       STAR = ' * ';
       STARBASE = '(O)';
@@ -29,6 +32,9 @@
       //TORPEDO_DAMAGE = 5000; // two hits to kill
       TORPEDO_DAMAGE = 3000;
 
+      // These have to be playtested and balanced
+      PHASER_ENERGY = 500; // How much per shot
+      PHASER_DAMAGE_MULTIPLIER = 10; // Phaser ROI
 
       var enemiesDestroyed = 0;
       var enemiesRemaining = 0;
@@ -210,6 +216,63 @@
         torpedos[torpedos.length] = instance;
       }
 
+      function applyDamageToSpecificShip(index, amount)
+      {
+        var instance;
+
+        instance = ships[index];
+
+        if (instance.energy >= amount)
+        {
+          instance.energy -= amount;
+        }
+        else
+        {
+          instance.energy = 0;
+        }
+
+
+        if (index === 0)
+        {
+          informPlayer("" + amount + " unit hit on player ship!" );
+          return; // There is already code that checks for player === dead...
+        }
+        else
+        {
+          informPlayer("" + amount + " unit hit on ship at sector " + instance.sectorRow + ", " + instance.sectorCol);
+        }
+
+        if (instance.energy === 0)
+        {
+          informPlayer("Enemy ship destroyed");
+
+          quadrant[instance.sectorRow][instance.sectorCol] = EMPTY_SECTOR; // Future idea - leave debris?
+
+          instance = ships.pop(); // get the LAST one (possible the same one we are already working with)
+
+          if (index < ships.length)
+          {
+            ships[index] = instance; // overwrite the current one with the last one
+          } 
+
+          // One less enemy in this part of the universe
+          temp = galaxy[ships[0].quadrantRow][ships[0].quadrantCol];
+
+          count = temp.charCodeAt(0);
+          count -= 1;
+          temp = String.fromCharCode(count) + temp[1] + temp[2];
+
+          galaxy[ships[0].quadrantRow][ships[0].quadrantCol] = temp;
+
+          showMap();
+          showLrs();
+
+          enemiesDestroyed += 1;
+          enemiesRemaining -= 1;
+          showMission();
+        }
+      }
+
       function applyDamage(row, col, amount)
       {
         var instance;
@@ -219,55 +282,7 @@
           instance = ships[index];
           if ((instance.sectorRow === row) && (instance.sectorCol === col))
           {
-            if (instance.energy >= amount)
-            {
-              instance.energy -= amount;
-            }
-            else
-            {
-              instance.energy = 0;
-            }
-
-            if (index === 0)
-            {
-              informPlayer("" + amount + " unit hit on player ship!" );
-            }
-            else
-            {
-              informPlayer("" + amount + " unit hit on ship at sector " + row + ", " + col);
-
-              if (instance.energy === 0)
-              {
-                informPlayer("Enemy ship destroyed");
-
-                quadrant[row][col] = EMPTY_SECTOR; // Future idea - leave debris?
-
-                instance = ships.pop(); // get the LAST one (possible the same one we are already working with)
-
-                if (index < ships.length)
-                {
-                  ships[index] = instance; // overwrite the current one with the last one
-                } 
-
-                // One less enemy in this part of the universe
-                temp = galaxy[ships[0].quadrantRow][ships[0].quadrantCol];
-
-                count = temp.charCodeAt(0);
-                count -= 1;
-                temp = String.fromCharCode(count) + temp[1] + temp[2];
-
-                galaxy[ships[0].quadrantRow][ships[0].quadrantCol] = temp;
-
-                showMap();
-                showLrs();
-
-                enemiesDestroyed += 1;
-                enemiesRemaining -= 1;
-                showMission();
-              }
-
-            }
-
+            applyDamageToSpecificShip(index, amount);
             return;
           }
           index++;
@@ -432,14 +447,26 @@
           for (col = 0; col < galaxy[row].length; col++ )
           {
             id = 'map' + row + col;
+            element = document.getElementById( id );
             str = galaxy[row][col];
             if (str[0] === '-')
             {
-              document.getElementById( id ).innerHTML = '???';
+              element.className = NORMAL_GALACTIC_MAP_CLASS;
+              element.innerHTML = '???';
             }
             else
             {
-              document.getElementById( id ).innerHTML = str;
+              // Make it easier to tell where you are on the galactic map
+              if ((row === ships[0].quadrantRow) &&
+                  (col === ships[0].quadrantCol))
+              {
+                element.className = HIGHLIGHTED_GALACTIC_MAP_CLASS;
+              }
+              else
+              {
+                element.className = NORMAL_GALACTIC_MAP_CLASS;
+              }
+              element.innerHTML = str;
             }
           }
         } 
@@ -592,6 +619,21 @@
 
       function informPlayer(message_text)
       {
+        // TODO Replace with a loop
+        document.getElementById( 'message4' ).innerHTML = document.getElementById( 'message3' ).innerHTML;
+        document.getElementById( 'message3' ).innerHTML = document.getElementById( 'message2' ).innerHTML;
+        document.getElementById( 'message2' ).innerHTML = document.getElementById( 'message1' ).innerHTML;
+        document.getElementById( 'message1' ).innerHTML = document.getElementById( 'message' ).innerHTML;
+        document.getElementById( 'message' ).innerHTML = message_text;
+      }
+
+      function clearMessageWindow(message_text)
+      {
+        // TODO Replace with a loop
+        document.getElementById( 'message4' ).innerHTML = '';
+        document.getElementById( 'message3' ).innerHTML = '';
+        document.getElementById( 'message2' ).innerHTML = '';
+        document.getElementById( 'message1' ).innerHTML = '';
         document.getElementById( 'message' ).innerHTML = message_text;
       }
 
@@ -707,7 +749,7 @@
 
         enterNewQuadrant();
 
-        informPlayer('Good luck captain!');
+        clearMessageWindow('Good luck captain!');
 
         // This extra check is to handle user hitting new game in the middle of a game
         if (tickId !== -1)
@@ -807,6 +849,55 @@
             ships[0].warpDeltaY = +1;
           break;
         }
+      }
+
+      function phaserHandler()
+      {
+        var index;
+
+        // Is there anybody here to shoot at?
+        if (ships.length === 1) // ships[0] is the player...
+        {
+          informPlayer('No enemy ships in this quadrant!');
+          return;
+        }
+
+        if (ships[0].energy <= PHASER_ENERGY)
+        {
+          informPlayer('Insufficient energy to fire phasers!');
+          return;
+        }
+        else
+        {
+          ships[0].energy -= PHASER_ENERGY;
+        }
+
+        enemyShips = ships.length-1;
+
+        totalDamage = PHASER_ENERGY * PHASER_DAMAGE_MULTIPLIER;
+        distributedDamage = totalDamage / enemyShips;
+
+        index = 1;
+        while (index < ships.length)
+        {
+          deltaX = ships[index].sectorCol - ships[0].sectorCol;
+          deltaY = ships[index].sectorRow - ships[0].sectorRow;
+          distanceSquared = deltaX * deltaX + deltaY * deltaY;
+          distance = Math.sqrt(distanceSquared);
+
+          individualDamage = distributedDamage / distance;
+          individualDamage = Math.round(individualDamage);
+
+          beforeCount = ships.length;
+          applyDamageToSpecificShip(index, individualDamage);
+          afterCount = ships.length;
+          // Don't let the destruction of one ship cause the next ship to get skipped over...
+          if (beforeCount === afterCount)
+          {
+            index += 1;
+          }
+        }        
+        showStatus();
       }
 
       function torpedoHandler(cmd)

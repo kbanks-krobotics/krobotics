@@ -1,0 +1,120 @@
+div.message { color: red }
+
+table#map
+{
+  border-collapse:collapse;
+}
+table#map caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#map td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:4ex;
+}
+
+table#lrs
+{
+  border-collapse:collapse;
+}
+table#lrs caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#lrs td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:4ex;
+}
+
+table#srs
+{
+  border-collapse:collapse;
+}
+table#srs caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#srs td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:3ex;
+}
+
+table#status
+{
+  border-collapse:collapse;
+}
+table#status caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#status td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:3ex;
+}
+
+table#impulse
+{
+  border-collapse:collapse;
+}
+table#impulse caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#impulse td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:3ex;
+}
+
+table#warp
+{
+  border-collapse:collapse;
+}
+table#warp caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#warp td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:3ex;
+}
+
+table#torpedo
+{
+  border-collapse:collapse;
+}
+table#torpedo caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#torpedo td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:3ex;
+}

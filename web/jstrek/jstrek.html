@@ -1,0 +1,380 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+  <head>
+    <title>Classic Star Trek in Javascript</title>
+
+    <link type="text/css" rel="stylesheet" href="jstrek.css" />
+
+    <script type="text/javascript" src="jstrek.js"></script>
+  </head>
+
+  <body>
+
+    <!-- MAP - Galactic Map -->
+    <table id = 'map' class = 'map'>
+      <caption>Galactic Map</caption>
+      <tr>
+        <td id = 'map00'>000</td>
+        <td id = 'map01'>000</td>
+        <td id = 'map02'>000</td>
+        <td id = 'map03'>000</td>
+        <td id = 'map04'>000</td>
+        <td id = 'map05'>000</td>
+        <td id = 'map06'>000</td>
+        <td id = 'map07'>000</td>
+        <td id = 'map08'>000</td>
+        <td id = 'map09'>000</td>
+      </tr>
+      <tr>
+        <td id = 'map10'>000</td>
+        <td id = 'map11'>000</td>
+        <td id = 'map12'>000</td>
+        <td id = 'map13'>000</td>
+        <td id = 'map14'>000</td>
+        <td id = 'map15'>000</td>
+        <td id = 'map16'>000</td>
+        <td id = 'map17'>000</td>
+        <td id = 'map18'>000</td>
+        <td id = 'map19'>000</td>
+      </tr>
+      <tr>
+        <td id = 'map20'>000</td>
+        <td id = 'map21'>000</td>
+        <td id = 'map22'>000</td>
+        <td id = 'map23'>000</td>
+        <td id = 'map24'>000</td>
+        <td id = 'map25'>000</td>
+        <td id = 'map26'>000</td>
+        <td id = 'map27'>000</td>
+        <td id = 'map28'>000</td>
+        <td id = 'map29'>000</td>
+      </tr>
+      <tr>
+        <td id = 'map30'>000</td>
+        <td id = 'map31'>000</td>
+        <td id = 'map32'>000</td>
+        <td id = 'map33'>000</td>
+        <td id = 'map34'>000</td>
+        <td id = 'map35'>000</td>
+        <td id = 'map36'>000</td>
+        <td id = 'map37'>000</td>
+        <td id = 'map38'>000</td>
+        <td id = 'map39'>000</td>
+      </tr>
+      <tr>
+        <td id = 'map40'>000</td>
+        <td id = 'map41'>000</td>
+        <td id = 'map42'>000</td>
+        <td id = 'map43'>000</td>
+        <td id = 'map44'>000</td>
+        <td id = 'map45'>000</td>
+        <td id = 'map46'>000</td>
+        <td id = 'map47'>000</td>
+        <td id = 'map48'>000</td>
+        <td id = 'map49'>000</td>
+      </tr>
+      <tr>
+        <td id = 'map50'>000</td>
+        <td id = 'map51'>000</td>
+        <td id = 'map52'>000</td>
+        <td id = 'map53'>000</td>
+        <td id = 'map54'>000</td>
+        <td id = 'map55'>000</td>
+        <td id = 'map56'>000</td>
+        <td id = 'map57'>000</td>
+        <td id = 'map58'>000</td>
+        <td id = 'map59'>000</td>
+      </tr>
+      <tr>
+        <td id = 'map60'>000</td>
+        <td id = 'map61'>000</td>
+        <td id = 'map62'>000</td>
+        <td id = 'map63'>000</td>
+        <td id = 'map64'>000</td>
+        <td id = 'map65'>000</td>
+        <td id = 'map66'>000</td>
+        <td id = 'map67'>000</td>
+        <td id = 'map68'>000</td>
+        <td id = 'map69'>000</td>
+      </tr>
+      <tr>
+        <td id = 'map70'>000</td>
+        <td id = 'map71'>000</td>
+        <td id = 'map72'>000</td>
+        <td id = 'map73'>000</td>
+        <td id = 'map74'>000</td>
+        <td id = 'map75'>000</td>
+        <td id = 'map76'>000</td>
+        <td id = 'map77'>000</td>
+        <td id = 'map78'>000</td>
+        <td id = 'map79'>000</td>
+      </tr>
+      <tr>
+        <td id = 'map80'>000</td>
+        <td id = 'map81'>000</td>
+        <td id = 'map82'>000</td>
+        <td id = 'map83'>000</td>
+        <td id = 'map84'>000</td>
+        <td id = 'map85'>000</td>
+        <td id = 'map86'>000</td>
+        <td id = 'map87'>000</td>
+        <td id = 'map88'>000</td>
+        <td id = 'map89'>000</td>
+      </tr>
+      <tr>
+        <td id = 'map90'>000</td>
+        <td id = 'map91'>000</td>
+        <td id = 'map92'>000</td>
+        <td id = 'map93'>000</td>
+        <td id = 'map94'>000</td>
+        <td id = 'map95'>000</td>
+        <td id = 'map96'>000</td>
+        <td id = 'map97'>000</td>
+        <td id = 'map98'>000</td>
+        <td id = 'map99'>000</td>
+      </tr>
+    </table>
+
+    <!-- WARP - Warp Drive Control -->
+    <table id = 'warp' class = 'warp'>
+      <caption>Warp Drive</caption>
+      <tr>
+        <td><input type = "button" value = "UP-LEFT" onClick = "warpHandler('up-left')" /></td>
+        <td><input type = "button" value = "UP" onClick = "warpHandler('up')" /></td>
+        <td><input type = "button" value = "UP-RIGHT" onClick = "warpHandler('up-right')" /></td>
+      </tr>
+      <tr>
+        <td><input type = "button" value = "LEFT" onClick = "warpHandler('left')" /></td>
+        <td><input type = "button" value = "STOP" onClick = "warpHandler('stop')" /></td>
+        <td><input type = "button" value = "RIGHT" onClick = "warpHandler('right')" /></td>
+      </tr>
+      <tr>
+        <td><input type = "button" value = "DOWN-LEFT" onClick = "warpHandler('down-left')" /></td>
+        <td><input type = "button" value = "DOWN" onClick = "warpHandler('down')" /></td>
+        <td><input type = "button" value = "DOWN-RIGHT" onClick = "warpHandler('down-right')" /></td>
+      </tr>
+    </table>
+
+    <!-- LRS - Long Range Scanner -->
+    <table id = 'lrs' class = 'lrs'>
+      <caption>Long Range Scanner</caption>
+      <tr>
+        <td id = 'lrs00'>000</td>
+        <td id = 'lrs01'>000</td>
+        <td id = 'lrs02'>000</td>
+      </tr>
+      <tr>
+        <td id = 'lrs10'>000</td>
+        <td id = 'lrs11'>000</td>
+        <td id = 'lrs12'>000</td>
+      </tr>
+      <tr>
+        <td id = 'lrs20'>000</td>
+        <td id = 'lrs21'>000</td>
+        <td id = 'lrs22'>000</td>
+      </tr>
+    </table>
+
+    <!-- STATUS - Status Display -->
+    <table id = 'status' class = 'status'>
+      <caption>Ship Status</caption>
+      <tr>
+        <td>Quadrant</td>
+        <td id = 'quadrant'>0-0</td>
+      </tr>
+      <tr>
+        <td>Sector</td>
+        <td id = 'sector'>0-0</td>
+      </tr>
+      <tr>
+        <td>Energy</td>
+        <td id = 'energy'>0000</td>
+      </tr>
+      <tr>
+        <td>Shields</td>
+        <td id = 'shields'>0000</td>
+      </tr>
+      <tr>
+        <td>Torpedos</td>
+        <td id = 'torpedos'>0</td>
+      </tr>
+    </table>
+
+    <!-- TORPEDO - Photon Torpedo Fire Control -->
+    <table id = 'torpedo' class = 'impulse'>
+      <caption>Photon Torpedo</caption>
+      <tr>
+        <td><input type = "button" value = "UP-LEFT" onClick = "torpedoHandler('up-left')" /></td>
+        <td><input type = "button" value = "UP" onClick = "torpedoHandler('up')" /></td>
+        <td><input type = "button" value = "UP-RIGHT" onClick = "torpedoHandler('up-right')" /></td>
+      </tr>
+      <tr>
+        <td><input type = "button" value = "LEFT" onClick = "torpedoHandler('left')" /></td>
+        <td><input type = "button" value = "STOP" onClick = "torpedoHandler('stop')" /></td>
+        <td><input type = "button" value = "RIGHT" onClick = "torpedoHandler('right')" /></td>
+      </tr>
+      <tr>
+        <td><input type = "button" value = "DOWN-LEFT" onClick = "torpedoHandler('down-left')" /></td>
+        <td><input type = "button" value = "DOWN" onClick = "torpedoHandler('down')" /></td>
+        <td><input type = "button" value = "DOWN-RIGHT" onClick = "torpedoHandler('down-right')" /></td>
+      </tr>
+    </table>
+
+    <!-- SRS - Short Range Scanner -->
+    <table id = 'srs' class = 'srs'>
+      <caption>Short Range Scanner</caption>
+      <tr>
+        <td id = 'srs00'>.</td>
+        <td id = 'srs01'> . </td>
+        <td id = 'srs02'> . </td>
+        <td id = 'srs03'> . </td>
+        <td id = 'srs04'> . </td>
+        <td id = 'srs05'> . </td>
+        <td id = 'srs06'> . </td>
+        <td id = 'srs07'> . </td>
+        <td id = 'srs08'> . </td>
+        <td id = 'srs09'> . </td>
+      </tr>
+      <tr>
+        <td id = 'srs10'> . </td>
+        <td id = 'srs11'> . </td>
+        <td id = 'srs12'> . </td>
+        <td id = 'srs13'> . </td>
+        <td id = 'srs14'> . </td>
+        <td id = 'srs15'> . </td>
+        <td id = 'srs16'> . </td>
+        <td id = 'srs17'> . </td>
+        <td id = 'srs18'> . </td>
+        <td id = 'srs19'> . </td>
+      </tr>
+      <tr>
+        <td id = 'srs20'> . </td>
+        <td id = 'srs21'> . </td>
+        <td id = 'srs22'> . </td>
+        <td id = 'srs23'> . </td>
+        <td id = 'srs24'> . </td>
+        <td id = 'srs25'> . </td>
+        <td id = 'srs26'> . </td>
+        <td id = 'srs27'> . </td>
+        <td id = 'srs28'> . </td>
+        <td id = 'srs29'> . </td>
+      </tr>
+      <tr>
+        <td id = 'srs30'> . </td>
+        <td id = 'srs31'> . </td>
+        <td id = 'srs32'> . </td>
+        <td id = 'srs33'> . </td>
+        <td id = 'srs34'> . </td>
+        <td id = 'srs35'> . </td>
+        <td id = 'srs36'> . </td>
+        <td id = 'srs37'> . </td>
+        <td id = 'srs38'> . </td>
+        <td id = 'srs39'> . </td>
+      </tr>
+      <tr>
+        <td id = 'srs40'> . </td>
+        <td id = 'srs41'> . </td>
+        <td id = 'srs42'> . </td>
+        <td id = 'srs43'> . </td>
+        <td id = 'srs44'> . </td>
+        <td id = 'srs45'> . </td>
+        <td id = 'srs46'> . </td>
+        <td id = 'srs47'> . </td>
+        <td id = 'srs48'> . </td>
+        <td id = 'srs49'> . </td>
+      </tr>
+      <tr>
+        <td id = 'srs50'> . </td>
+        <td id = 'srs51'> . </td>
+        <td id = 'srs52'> . </td>
+        <td id = 'srs53'> . </td>
+        <td id = 'srs54'> . </td>
+        <td id = 'srs55'> . </td>
+        <td id = 'srs56'> . </td>
+        <td id = 'srs57'> . </td>
+        <td id = 'srs58'> . </td>
+        <td id = 'srs59'> . </td>
+      </tr>
+      <tr>
+        <td id = 'srs60'> . </td>
+        <td id = 'srs61'> . </td>
+        <td id = 'srs62'> . </td>
+        <td id = 'srs63'> . </td>
+        <td id = 'srs64'> . </td>
+        <td id = 'srs65'> . </td>
+        <td id = 'srs66'> . </td>
+        <td id = 'srs67'> . </td>
+        <td id = 'srs68'> . </td>
+        <td id = 'srs69'> . </td>
+      </tr>
+      <tr>
+        <td id = 'srs70'> . </td>
+        <td id = 'srs71'> . </td>
+        <td id = 'srs72'> . </td>
+        <td id = 'srs73'> . </td>
+        <td id = 'srs74'> . </td>
+        <td id = 'srs75'> . </td>
+        <td id = 'srs76'> . </td>
+        <td id = 'srs77'> . </td>
+        <td id = 'srs78'> . </td>
+        <td id = 'srs79'> . </td>
+      </tr>
+      <tr>
+        <td id = 'srs80'> . </td>
+        <td id = 'srs81'> . </td>
+        <td id = 'srs82'> . </td>
+        <td id = 'srs83'> . </td>
+        <td id = 'srs84'> . </td>
+        <td id = 'srs85'> . </td>
+        <td id = 'srs86'> . </td>
+        <td id = 'srs87'> . </td>
+        <td id = 'srs88'> . </td>
+        <td id = 'srs89'> . </td>
+      </tr>
+      <tr>
+        <td id = 'srs90'> . </td>
+        <td id = 'srs91'> . </td>
+        <td id = 'srs92'> . </td>
+        <td id = 'srs93'> . </td>
+        <td id = 'srs94'> . </td>
+        <td id = 'srs95'> . </td>
+        <td id = 'srs96'> . </td>
+        <td id = 'srs97'> . </td>
+        <td id = 'srs98'> . </td>
+        <td id = 'srs99'> . </td>
+      </tr>
+    </table>
+
+    <!-- IMPULSE - Impulse Engine Control -->
+    <table id = 'impulse' class = 'impulse'>
+      <caption>Impulse Engines</caption>
+      <tr>
+        <td><input type = "button" value = "UP-LEFT" onClick = "impulseHandler('up-left')" /></td>
+        <td><input type = "button" value = "UP" onClick = "impulseHandler('up')" /></td>
+        <td><input type = "button" value = "UP-RIGHT" onClick = "impulseHandler('up-right')" /></td>
+      </tr>
+      <tr>
+        <td><input type = "button" value = "LEFT" onClick = "impulseHandler('left')" /></td>
+        <td><input type = "button" value = "STOP" onClick = "impulseHandler('stop')" /></td>
+        <td><input type = "button" value = "RIGHT" onClick = "impulseHandler('right')" /></td>
+      </tr>
+      <tr>
+        <td><input type = "button" value = "DOWN-LEFT" onClick = "impulseHandler('down-left')" /></td>
+        <td><input type = "button" value = "DOWN" onClick = "impulseHandler('down')" /></td>
+        <td><input type = "button" value = "DOWN-RIGHT" onClick = "impulseHandler('down-right')" /></td>
+      </tr>
+    </table>
+
+    <formaction = "">
+      <div id = "message" class = "message">Click [New Game] To Start</div>
+    </form>
+
+    <input type = "button" value = "New Game" onClick = "newGame()" />
+
+    <input type = "button" value = "LRS" onClick = "longRangeScan()" />
+
+    <input type = "button" value = "DOCK" onClick = "attemptDocking()" />
+
+  </body>
+</html>

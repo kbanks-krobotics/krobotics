@@ -25,6 +25,10 @@
 
       ENERGY_TO_MOVE_SECTOR = 10;
       ENERGY_TO_MOVE_QUADRANT = 100;
+      //TORPEDO_DAMAGE = 10000; // more than enough to kill for now, may weaken later
+      //TORPEDO_DAMAGE = 5000; // two hits to kill
+      TORPEDO_DAMAGE = 3000;
+
 
       var row;
       var col;
@@ -39,9 +43,9 @@
         quadrantCol : 0,
         sectorRow : 0,
         sectorCol : 0,
-        energy : 0,
+        energy : 9999, // seemed convenient to go ahead and start with a full tank...
         shields : 0,
-        torpedos : 0,
+        torpedos : 10, // and ammo...
         warpDeltaX : 0,
         warpDeltaY : 0,
         impulseDeltaX : 0,
@@ -56,8 +60,7 @@
         impulseDeltaY : 0
       };
 
-      var player = Object.create(ship);
-      var enemies = [];
+      var ships = [];
       var torpedos = [];
 
       var tickId = -1;
@@ -111,9 +114,9 @@
       // Used at the beginning of the game, plus whenever spacedock achieved
       function replenishPlayer()
       {
-        player.energy = 9999;
-        player.shields = 0;
-        player.torpedos = 10;
+        ships[0].energy = 9999;
+        ships[0].shields = 0;
+        ships[0].torpedos = 99; //10;
       }
 
       function initGalaxy()
@@ -139,7 +142,7 @@
         {
           row = random0(NUM_QUADRANT_ROWS);
           col = random0(NUM_QUADRANT_COLS);
-          if (quadrant[row][col] == EMPTY_SECTOR)
+          if (quadrant[row][col] === EMPTY_SECTOR)
           {
             quadrant[row][col] = what;
             notDone = false;
@@ -147,8 +150,8 @@
         } while (notDone);
         if (what === ENTERPRISE)
         {
-          player.sectorRow = row;
-          player.sectorCol = col;
+          ships[0].sectorRow = row;
+          ships[0].sectorCol = col;
         }
         else if (what === KLINGON)
         {
@@ -160,7 +163,7 @@
           klingon.impulseDeltaY = random0(3)-1;
           klingon.impulseDeltaX = random0(3)-1;
 
-          enemies[enemies.length] = klingon;
+          ships[ships.length] = klingon;
         }
       }
 
@@ -173,12 +176,13 @@
         if ((newRow < 0) ||
             (newRow >= NUM_QUADRANT_ROWS) ||
             (newCol < 0) ||
-            (newCol >= NUM_QUADRANT_ROWS))
+            (newCol >= NUM_QUADRANT_COLS))
         {
+          // TODO Penalize?
           return;
         }
 
-        if (quadrant[newRow][newCol] != EMPTY_SECTOR)
+        if (quadrant[newRow][newCol] !== EMPTY_SECTOR)
         {
           // TODO Penalize?
           return;
@@ -197,14 +201,70 @@
         torpedos[torpedos.length] = instance;
       }
 
+      function applyDamage(row, col, amount)
+      {
+        var instance;
+        var index = 0;
+        while (index < ships.length)
+        {
+          instance = ships[index];
+          if ((instance.sectorRow === row) && (instance.sectorCol === col))
+          {
+            if (instance.energy >= amount)
+            {
+              instance.energy -= amount;
+            }
+            else
+            {
+              instance.energy = 0;
+            }
+
+            if (index === 0)
+            {
+              informPlayer("" + amount + " unit hit on player ship!" );
+            }
+            else
+            {
+              informPlayer("" + amount + " unit hit on ship at sector " + row + ", " + col);
+
+              if (instance.energy === 0)
+              {
+                informPlayer("Enemy ship destroyed");
+
+                quadrant[row][col] = EMPTY_SECTOR; // Future idea - leave debris?
+
+                instance = ships.pop(); // get the LAST one (possible the same one we are already working with)
+
+                if (index < ships.length)
+                {
+                  ships[index] = instance; // overwrite the current one with the last one
+                } 
+
+                // One less enemy in this part of the universe
+                temp = galaxy[ships[0].quadrantRow][ships[0].quadrantCol];
+
+                count = temp.charCodeAt(0);
+                count -= 1;
+                temp = String.fromCharCode(count) + temp[1] + temp[2];
+
+                galaxy[ships[0].quadrantRow][ships[0].quadrantCol] = temp;
+
+                showMap();
+                showLrs();
+              }
+
+            }
+
+            return;
+          }
+          index++;
+        }
+      }
+
       function moveTorpedos()
       {
-        if (torpedos.length == 0)
-        {
-          return;
-        }
-
-        index = 0;
+        var instance;
+        var index = 0;
         while (index < torpedos.length)
         {
           instance = torpedos[index];
@@ -219,7 +279,7 @@
           }
           else
           {
-            // Just make it vanish for tonight (no damage)
+            applyDamage(instance.sectorRow + instance.impulseDeltaY, instance.sectorCol + instance.impulseDeltaX, TORPEDO_DAMAGE);
 
             quadrant[instance.sectorRow][instance.sectorCol] = EMPTY_SECTOR;
 
@@ -235,34 +295,76 @@
       }
 
 
-      function moveKlingons()
+      function klingonFire(instance)
       {
-        if (enemies.length == 0)
+        if (instance.torpedos === 0)
         {
           return;
         }
 
-        index = 0;
-        while (index < enemies.length)
+        if (instance.sectorRow === ships[0].sectorRow)
         {
-          instance = enemies[index];
-
-          if (tryQuadrantMove(KLINGON,
-                              instance.sectorRow, instance.sectorCol,
-                              instance.impulseDeltaY, instance.impulseDeltaX))
+          if (instance.sectorCol > ships[0].sectorCol)
           {
-            instance.sectorRow += instance.impulseDeltaY;
-            instance.sectorCol += instance.impulseDeltaX;
+            addTorpedo(instance.sectorRow, instance.sectorCol, 0, -1);
           }
           else
           {
-            // Just make them bounce around for tonight
-            instance.impulseDeltaY *= -1;
-            instance.impulseDeltaX *= -1;
+            addTorpedo(instance.sectorRow, instance.sectorCol, 0, +1);
+          }
+          instance.torpedos -= 1;
+        }
+        else if (instance.sectorCol === ships[0].sectorCol)
+        {
+          if (instance.sectorRow > ships[0].sectorRow)
+          {
+            addTorpedo(instance.sectorRow, instance.sectorCol, -1, 0);
+          }
+          else
+          {
+            addTorpedo(instance.sectorRow, instance.sectorCol, +1, 0);
+          }
+          instance.torpedos -= 1;
+        }
+      }
+
+      function moveKlingons()
+      {
+        // ships[0] is the player, not a klingon
+        if (ships.length === 1)
+        {
+          return;
+        }
+
+        index = 1;
+        while (index < ships.length)
+        {
+          instance = ships[index];
+
+          // Temp experiment
+          klingonFire(instance);
+
+          // Only try to move if there is sufficient energy
+          if (instance.energy > ENERGY_TO_MOVE_SECTOR)
+          {
+            if (tryQuadrantMove(KLINGON,
+                                instance.sectorRow, instance.sectorCol,
+                                instance.impulseDeltaY, instance.impulseDeltaX))
+            {
+              instance.sectorRow += instance.impulseDeltaY;
+              instance.sectorCol += instance.impulseDeltaX;
+            }
+            else
+            {
+              // Just make them bounce around for tonight
+              instance.impulseDeltaY *= -1;
+              instance.impulseDeltaX *= -1;
+            }
+            instance.energy -= ENERGY_TO_MOVE_SECTOR;
           }
           index += 1;
         }
-        showSrs(); // make the torpedo changes visible
+        showSrs(); // make the klingon movement visible
       }
 
 
@@ -278,9 +380,10 @@
           }
         }
 
-        // Place Klingons
-        enemies = [];
+        // Clear out any Klingons left in the ships array from a previous quadrant
+        ships.splice(1, ships.length-1);
 
+        // Place Klingons
         klingons = parseInt(sectorCode[0]);
         while (klingons > 0)
         {
@@ -336,8 +439,8 @@
           for (colOffset = -1; colOffset <= 1; colOffset++ )
           {
             // in bounds?
-            row = player.quadrantRow + rowOffset;
-            col = player.quadrantCol + colOffset;
+            row = ships[0].quadrantRow + rowOffset;
+            col = ships[0].quadrantCol + colOffset;
 
             id = 'lrs' + (rowOffset+1) + (colOffset+1);
 
@@ -369,8 +472,8 @@
           for (colOffset = -1; colOffset <= 1; colOffset++ )
           {
             // in bounds?
-            row = player.quadrantRow + rowOffset;
-            col = player.quadrantCol + colOffset;
+            row = ships[0].quadrantRow + rowOffset;
+            col = ships[0].quadrantCol + colOffset;
 
             if ((row >= 0) && (row < NUM_GALAXY_ROWS) &&
                 (col >= 0) && (col < NUM_GALAXY_COLS))
@@ -396,21 +499,21 @@
 
       function showStatus()
       {
-        str = player.quadrantRow + '-' + player.quadrantCol;
+        str = ships[0].quadrantRow + '-' + ships[0].quadrantCol;
         document.getElementById( 'quadrant' ).innerHTML = str;
 
-        str = player.sectorRow + '-' + player.sectorCol;
+        str = ships[0].sectorRow + '-' + ships[0].sectorCol;
         document.getElementById( 'sector' ).innerHTML = str;
 
-        str = '000' + player.energy;
+        str = '000' + ships[0].energy;
         str = str.slice(str.length-4, str.length);
         document.getElementById( 'energy' ).innerHTML = str;
 
-        str = '000' + player.shields;
+        str = '000' + ships[0].shields;
         str = str.slice(str.length-4, str.length);
         document.getElementById( 'shields' ).innerHTML = str;
 
-        str = '' + player.torpedos;
+        str = '' + ships[0].torpedos;
         document.getElementById( 'torpedos' ).innerHTML = str;
       }
 
@@ -492,39 +595,39 @@
 
         moveKlingons();
 
-        if (player.energy > 0)
+        if (ships[0].energy > 0)
         {
-          player.energy -= 1;
+          ships[0].energy -= 1;
 
           // Check for impulse engines
-          if ((player.energy > ENERGY_TO_MOVE_SECTOR) &&
-              ((player.impulseDeltaX != 0) || (player.impulseDeltaY != 0)))
+          if ((ships[0].energy > ENERGY_TO_MOVE_SECTOR) &&
+              ((ships[0].impulseDeltaX !== 0) || (ships[0].impulseDeltaY !== 0)))
           {
             // You pay the movement cost even if you hit something...
-            player.energy -= ENERGY_TO_MOVE_SECTOR;
+            ships[0].energy -= ENERGY_TO_MOVE_SECTOR;
 
             if (tryQuadrantMove(ENTERPRISE,
-                                player.sectorRow, player.sectorCol,
-                                player.impulseDeltaY, player.impulseDeltaX))
+                                ships[0].sectorRow, ships[0].sectorCol,
+                                ships[0].impulseDeltaY, ships[0].impulseDeltaX))
             {
-              player.sectorRow += player.impulseDeltaY;
-              player.sectorCol += player.impulseDeltaX;
+              ships[0].sectorRow += ships[0].impulseDeltaY;
+              ships[0].sectorCol += ships[0].impulseDeltaX;
             }
           }
 
           // else check for warp drive
-          else if ((player.energy > ENERGY_TO_MOVE_QUADRANT) &&
-              ((player.warpDeltaX != 0) || (player.warpDeltaY != 0)))
+          else if ((ships[0].energy > ENERGY_TO_MOVE_QUADRANT) &&
+              ((ships[0].warpDeltaX !== 0) || (ships[0].warpDeltaY !== 0)))
           {
             // You pay the movement cost even if you hit something...
-            player.energy -= ENERGY_TO_MOVE_QUADRANT;
+            ships[0].energy -= ENERGY_TO_MOVE_QUADRANT;
 
             if (tryGalaxyMove(ENTERPRISE,
-                              player.quadrantRow, player.quadrantCol,
-                              player.warpDeltaY, player.warpDeltaX))
+                              ships[0].quadrantRow, ships[0].quadrantCol,
+                              ships[0].warpDeltaY, ships[0].warpDeltaX))
             {
-              player.quadrantRow += player.warpDeltaY;
-              player.quadrantCol += player.warpDeltaX;
+              ships[0].quadrantRow += ships[0].warpDeltaY;
+              ships[0].quadrantCol += ships[0].warpDeltaX;
 
               enterNewQuadrant();
             }
@@ -541,13 +644,13 @@
       function enterNewQuadrant()
       {
         // Unhide the quadrant the player is in
-        unhideQuadrant(player.quadrantRow, player.quadrantCol);
+        unhideQuadrant(ships[0].quadrantRow, ships[0].quadrantCol);
 
         showMap();
 
         showLrs();
 
-        initQuadrant(galaxy[player.quadrantRow][player.quadrantCol]);
+        initQuadrant(galaxy[ships[0].quadrantRow][ships[0].quadrantCol]);
 
         showSrs();
 
@@ -558,13 +661,16 @@
       {
         initGalaxy();
 
-        player.quadrantRow = random0(NUM_GALAXY_ROWS);
-        player.quadrantCol = random0(NUM_GALAXY_COLS);
+        ships = []
+        ships[0] = Object.create(ship);
 
-        player.warpDeltaX = 0;
-        player.warpDeltaY = 0;
-        player.impulseDeltaX = 0;
-        player.impulseDeltaY = 0;
+        ships[0].quadrantRow = random0(NUM_GALAXY_ROWS);
+        ships[0].quadrantCol = random0(NUM_GALAXY_COLS);
+
+        ships[0].warpDeltaX = 0;
+        ships[0].warpDeltaY = 0;
+        ships[0].impulseDeltaX = 0;
+        ships[0].impulseDeltaY = 0;
 
         replenishPlayer();
 
@@ -573,7 +679,7 @@
         informPlayer('Good luck captain!');
 
         // This extra check is to handle user hitting new game in the middle of a game
-        if (tickId != -1)
+        if (tickId !== -1)
         {
           clearTimeout(tickId);
         }
@@ -583,45 +689,45 @@
       function impulseHandler(cmd)
       {
         // Impulse engines cancels warp drive
-        player.warpDeltaX = 0;
-        player.warpDeltaY = 0;
+        ships[0].warpDeltaX = 0;
+        ships[0].warpDeltaY = 0;
         switch (cmd)
         {
           case 'up-left':
-            player.impulseDeltaX = -1;
-            player.impulseDeltaY = -1;
+            ships[0].impulseDeltaX = -1;
+            ships[0].impulseDeltaY = -1;
           break;
           case 'up':
-            player.impulseDeltaX = 0;
-            player.impulseDeltaY = -1;
+            ships[0].impulseDeltaX = 0;
+            ships[0].impulseDeltaY = -1;
           break;
           case 'up-right':
-            player.impulseDeltaX = +1;
-            player.impulseDeltaY = -1;
+            ships[0].impulseDeltaX = +1;
+            ships[0].impulseDeltaY = -1;
           break;
           case 'left':
-            player.impulseDeltaX = -1;
-            player.impulseDeltaY = 0;
+            ships[0].impulseDeltaX = -1;
+            ships[0].impulseDeltaY = 0;
           break;
           case 'stop':
-            player.impulseDeltaX = 0;
-            player.impulseDeltaY = 0;
+            ships[0].impulseDeltaX = 0;
+            ships[0].impulseDeltaY = 0;
           break;
           case 'right':
-            player.impulseDeltaX = +1;
-            player.impulseDeltaY = 0;
+            ships[0].impulseDeltaX = +1;
+            ships[0].impulseDeltaY = 0;
           break;
           case 'down-left':
-            player.impulseDeltaX = -1;
-            player.impulseDeltaY = +1;
+            ships[0].impulseDeltaX = -1;
+            ships[0].impulseDeltaY = +1;
           break;
           case 'down':
-            player.impulseDeltaX = 0;
-            player.impulseDeltaY = +1;
+            ships[0].impulseDeltaX = 0;
+            ships[0].impulseDeltaY = +1;
           break;
           case 'down-right':
-            player.impulseDeltaX = +1;
-            player.impulseDeltaY = +1;
+            ships[0].impulseDeltaX = +1;
+            ships[0].impulseDeltaY = +1;
           break;
         }
       }
@@ -629,52 +735,52 @@
       function warpHandler(cmd)
       {
         // Warp drive cancels impulse engines
-        player.impulseDeltaX = 0;
-        player.impulseDeltaY = 0;
+        ships[0].impulseDeltaX = 0;
+        ships[0].impulseDeltaY = 0;
         switch (cmd)
         {
           case 'up-left':
-            player.warpDeltaX = -1;
-            player.warpDeltaY = -1;
+            ships[0].warpDeltaX = -1;
+            ships[0].warpDeltaY = -1;
           break;
           case 'up':
-            player.warpDeltaX = 0;
-            player.warpDeltaY = -1;
+            ships[0].warpDeltaX = 0;
+            ships[0].warpDeltaY = -1;
           break;
           case 'up-right':
-            player.warpDeltaX = +1;
-            player.warpDeltaY = -1;
+            ships[0].warpDeltaX = +1;
+            ships[0].warpDeltaY = -1;
           break;
           case 'left':
-            player.warpDeltaX = -1;
-            player.warpDeltaY = 0;
+            ships[0].warpDeltaX = -1;
+            ships[0].warpDeltaY = 0;
           break;
           case 'stop':
-            player.warpDeltaX = 0;
-            player.warpDeltaY = 0;
+            ships[0].warpDeltaX = 0;
+            ships[0].warpDeltaY = 0;
           break;
           case 'right':
-            player.warpDeltaX = +1;
-            player.warpDeltaY = 0;
+            ships[0].warpDeltaX = +1;
+            ships[0].warpDeltaY = 0;
           break;
           case 'down-left':
-            player.warpDeltaX = -1;
-            player.warpDeltaY = +1;
+            ships[0].warpDeltaX = -1;
+            ships[0].warpDeltaY = +1;
           break;
           case 'down':
-            player.warpDeltaX = 0;
-            player.warpDeltaY = +1;
+            ships[0].warpDeltaX = 0;
+            ships[0].warpDeltaY = +1;
           break;
           case 'down-right':
-            player.warpDeltaX = +1;
-            player.warpDeltaY = +1;
+            ships[0].warpDeltaX = +1;
+            ships[0].warpDeltaY = +1;
           break;
         }
       }
 
       function torpedoHandler(cmd)
       {
-        if (player.torpedos <= 0)
+        if (ships[0].torpedos <= 0)
         {
           return;
         }
@@ -682,34 +788,34 @@
         switch (cmd)
         {
           case 'up-left':
-            addTorpedo(player.sectorRow, player.sectorCol, -1, -1)
+            addTorpedo(ships[0].sectorRow, ships[0].sectorCol, -1, -1)
           break;
           case 'up':
-            addTorpedo(player.sectorRow, player.sectorCol, -1, 0)
+            addTorpedo(ships[0].sectorRow, ships[0].sectorCol, -1, 0)
           break;
           case 'up-right':
-            addTorpedo(player.sectorRow, player.sectorCol, -1, +1)
+            addTorpedo(ships[0].sectorRow, ships[0].sectorCol, -1, +1)
           break;
           case 'left':
-            addTorpedo(player.sectorRow, player.sectorCol, 0, -1)
+            addTorpedo(ships[0].sectorRow, ships[0].sectorCol, 0, -1)
           break;
           case 'stop':
           break;
           case 'right':
-            addTorpedo(player.sectorRow, player.sectorCol, 0, +1)
+            addTorpedo(ships[0].sectorRow, ships[0].sectorCol, 0, +1)
           break;
           case 'down-left':
-            addTorpedo(player.sectorRow, player.sectorCol, +1, -1)
+            addTorpedo(ships[0].sectorRow, ships[0].sectorCol, +1, -1)
           break;
           case 'down':
-            addTorpedo(player.sectorRow, player.sectorCol, +1, 0)
+            addTorpedo(ships[0].sectorRow, ships[0].sectorCol, +1, 0)
           break;
           case 'down-right':
-            addTorpedo(player.sectorRow, player.sectorCol, +1, +1)
+            addTorpedo(ships[0].sectorRow, ships[0].sectorCol, +1, +1)
           break;
         }
 
-        player.torpedos -= 1;
+        ships[0].torpedos -= 1;
         showStatus();
 
       }
@@ -726,20 +832,20 @@
         dockSuccessful = false;
 
         // Is there any starbase to dock with?
-        if (galaxy[player.quadrantRow][player.quadrantCol][1] === '0')
+        if (galaxy[ships[0].quadrantRow][ships[0].quadrantCol][1] === '0')
         {
           informPlayer('No starbase in this quadrant to dock with!');
           return;
         }
 
-        if ((player.warpDeltaX != 0) || (player.warpDeltaY != 0))
+        if ((ships[0].warpDeltaX !== 0) || (ships[0].warpDeltaY !== 0))
         {
           informPlayer('Warp drive must be disengaged before attempting space dock!');
           // TODO Penalize player?
           return;
         }
 
-        if ((player.impulseDeltaX != 0) || (player.impulseDeltaY != 0))
+        if ((ships[0].impulseDeltaX !== 0) || (ships[0].impulseDeltaY !== 0))
         {
           informPlayer('Impulse engines must be at full stop before attempting space dock!');
           // TODO Penalize player?
@@ -752,18 +858,18 @@
         //
 
         // IS there a row above us?
-        if (player.sectorRow > 0)
+        if (ships[0].sectorRow > 0)
         {
           // Is there a starbase there?
-          if (quadrant[player.sectorRow - 1][player.sectorCol] === STARBASE)
+          if (quadrant[ships[0].sectorRow - 1][ships[0].sectorCol] === STARBASE)
           {
             dockSuccessful = true;
           }
         }
         // IS there a row below us?
-        if (player.sectorRow < 9)
+        if (ships[0].sectorRow < 9)
         {
-          if (quadrant[player.sectorRow + 1][player.sectorCol] === STARBASE)
+          if (quadrant[ships[0].sectorRow + 1][ships[0].sectorCol] === STARBASE)
           {
             dockSuccessful = true;
           }

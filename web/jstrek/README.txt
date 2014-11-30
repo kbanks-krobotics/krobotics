@@ -28,3 +28,15 @@ Torpedos were in the code but apparently did no damage.
 Phasers were not in the code yet.
 
 Starbases and docking were in.
+
+Second checkin was dated 02/18/2012
+
+"After torpedo work"
+
+Unexpected side effect - now that the Klingons can shoot back, it is more of a "twitch game" than I anticipated...
+
+(Note - enemy ships not allowed to use diagonal shots)
+
+Enemy ships as powerful as the player ships. So took 4 hits to kill...
+
+UI still not arranged. Still no phasers.

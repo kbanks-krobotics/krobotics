@@ -30,6 +30,9 @@
       TORPEDO_DAMAGE = 3000;
 
 
+      var enemiesDestroyed = 0;
+      var enemiesRemaining = 0;
+
       var row;
       var col;
       var id;
@@ -43,7 +46,8 @@
         quadrantCol : 0,
         sectorRow : 0,
         sectorCol : 0,
-        energy : 9999, // seemed convenient to go ahead and start with a full tank...
+        //energy : 9999, // seemed convenient to go ahead and start with a full tank...
+        energy : 1999, // playtesting
         shields : 0,
         torpedos : 10, // and ammo...
         warpDeltaX : 0,
@@ -75,13 +79,15 @@
         return Math.floor( Math.random() * n );
       }
 
-      function generateRandomQuadrant(row, col)
+      function generateRandomQuadrant(row, col, difficultyLevel)
       {
         var klingons, starbases, stars, result;
         result = '';
 
         // 0-9 Klingons
-        klingons = random0(10);
+        klingons = random0(difficultyLevel+1);
+
+        enemiesRemaining += klingons;
 
         // 10% chance of a starbase
         if ( Math.random() < 0.1 )
@@ -119,8 +125,11 @@
         ships[0].torpedos = 99; //10;
       }
 
-      function initGalaxy()
+      function initGalaxy(difficultyLevel)
       {
+        enemiesRemaining = 0;
+        enemiesDestroyed = 0;
+
         galaxy = new Array(NUM_GALAXY_ROWS);
         for (row = 0; row < galaxy.length; row++)
         {
@@ -129,7 +138,7 @@
           {
 
             // The negation means "hidden from player"
-            galaxy[row][col] = '-' + generateRandomQuadrant(row, col);
+            galaxy[row][col] = '-' + generateRandomQuadrant(row, col, difficultyLevel);
           }
         }
       } 
@@ -251,6 +260,10 @@
 
                 showMap();
                 showLrs();
+
+                enemiesDestroyed += 1;
+                enemiesRemaining -= 1;
+                showMission();
               }
 
             }
@@ -517,6 +530,16 @@
         document.getElementById( 'torpedos' ).innerHTML = str;
       }
 
+      function showMission()
+      {
+        str = '00' + enemiesRemaining;
+        str = str.slice(str.length-3, str.length);
+        document.getElementById( 'remaining' ).innerHTML = str;
+
+        str = '00' + enemiesDestroyed;
+        str = str.slice(str.length-3, str.length);
+        document.getElementById( 'destroyed' ).innerHTML = str;
+      }
 
       function tryQuadrantMove(what, row, col, rowDelta, colDelta)
       {
@@ -592,6 +615,12 @@
 
 
         // Slow processing
+        if (enemiesRemaining === 0)
+        {
+          informPlayer("Congratulations on a successfuly completed mission!" );
+          return;
+        }
+
 
         moveKlingons();
 
@@ -657,9 +686,11 @@
         showStatus();
       }
 
-      function newGame()
+      function newGame(difficultyLevel)
       {
-        initGalaxy();
+        initGalaxy(difficultyLevel);
+
+        showMission();
 
         ships = []
         ships[0] = Object.create(ship);

@@ -68,6 +68,23 @@ table#status td
   width:3ex;
 }
 
+table#mission
+{
+  border-collapse:collapse;
+}
+table#mission caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#mission td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:3ex;
+}
+
 table#impulse
 {
   border-collapse:collapse;

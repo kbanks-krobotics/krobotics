@@ -29,6 +29,7 @@ Phasers were not in the code yet.
 
 Starbases and docking were in.
 
+
 Second checkin was dated 02/18/2012
 
 "After torpedo work"
@@ -40,3 +41,8 @@ Unexpected side effect - now that the Klingons can shoot back, it is more of a "
 Enemy ships as powerful as the player ships. So took 4 hits to kill...
 
 UI still not arranged. Still no phasers.
+
+
+Third checkin was also dated 02/18/2012
+
+"jstrek after mission, difficulty level, victory detection"

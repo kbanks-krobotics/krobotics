@@ -201,23 +201,16 @@
       </tr>
     </table>
 
-    <!-- TORPEDO - Photon Torpedo Fire Control -->
-    <table id = 'torpedo' class = 'impulse'>
-      <caption>Photon Torpedo</caption>
+    <!-- MISSION - Mission Status Display -->
+    <table id = 'mission' class = 'mission'>
+      <caption>Mission Status</caption>
       <tr>
-        <td><input type = "button" value = "UP-LEFT" onClick = "torpedoHandler('up-left')" /></td>
-        <td><input type = "button" value = "UP" onClick = "torpedoHandler('up')" /></td>
-        <td><input type = "button" value = "UP-RIGHT" onClick = "torpedoHandler('up-right')" /></td>
+        <td>Destroyed</td>
+        <td id = 'destroyed'>000</td>
       </tr>
       <tr>
-        <td><input type = "button" value = "LEFT" onClick = "torpedoHandler('left')" /></td>
-        <td><input type = "button" value = "STOP" onClick = "torpedoHandler('stop')" /></td>
-        <td><input type = "button" value = "RIGHT" onClick = "torpedoHandler('right')" /></td>
-      </tr>
-      <tr>
-        <td><input type = "button" value = "DOWN-LEFT" onClick = "torpedoHandler('down-left')" /></td>
-        <td><input type = "button" value = "DOWN" onClick = "torpedoHandler('down')" /></td>
-        <td><input type = "button" value = "DOWN-RIGHT" onClick = "torpedoHandler('down-right')" /></td>
+        <td>Remaining</td>
+        <td id = 'remaining'>000</td>
       </tr>
     </table>
 
@@ -346,6 +339,26 @@
       </tr>
     </table>
 
+    <!-- TORPEDO - Photon Torpedo Fire Control -->
+    <table id = 'torpedo' class = 'impulse'>
+      <caption>Photon Torpedo</caption>
+      <tr>
+        <td><input type = "button" value = "UP-LEFT" onClick = "torpedoHandler('up-left')" /></td>
+        <td><input type = "button" value = "UP" onClick = "torpedoHandler('up')" /></td>
+        <td><input type = "button" value = "UP-RIGHT" onClick = "torpedoHandler('up-right')" /></td>
+      </tr>
+      <tr>
+        <td><input type = "button" value = "LEFT" onClick = "torpedoHandler('left')" /></td>
+        <td><input type = "button" value = "STOP" onClick = "torpedoHandler('stop')" /></td>
+        <td><input type = "button" value = "RIGHT" onClick = "torpedoHandler('right')" /></td>
+      </tr>
+      <tr>
+        <td><input type = "button" value = "DOWN-LEFT" onClick = "torpedoHandler('down-left')" /></td>
+        <td><input type = "button" value = "DOWN" onClick = "torpedoHandler('down')" /></td>
+        <td><input type = "button" value = "DOWN-RIGHT" onClick = "torpedoHandler('down-right')" /></td>
+      </tr>
+    </table>
+
     <!-- IMPULSE - Impulse Engine Control -->
     <table id = 'impulse' class = 'impulse'>
       <caption>Impulse Engines</caption>
@@ -367,10 +380,15 @@
     </table>
 
     <formaction = "">
-      <div id = "message" class = "message">Click [New Game] To Start</div>
+      <div id = "message" class = "message">Click a [Difficulty Level] To Start</div>
     </form>
 
-    <input type = "button" value = "New Game" onClick = "newGame()" />
+    <input type = "button" value = "Cadet" onClick = "newGame(1)" />
+    <input type = "button" value = "Ensign" onClick = "newGame(2)" />
+    <input type = "button" value = "Captain" onClick = "newGame(3)" />
+    <input type = "button" value = "Commodore" onClick = "newGame(5)" />
+    <input type = "button" value = "Admiral" onClick = "newGame(7)" />
+    <input type = "button" value = "Insane" onClick = "newGame(9)" />
 
     <input type = "button" value = "LRS" onClick = "longRangeScan()" />
 

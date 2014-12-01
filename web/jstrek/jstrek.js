@@ -7,6 +7,19 @@
         }
       }; 
 
+	  //shuffles list in-place (found via a google search)
+      function shuffle(list) {
+        var i, j, t;
+        for (i = 1; i < list.length; i++) {
+          j = Math.floor(Math.random()*(1+i));  // choose j in [0..i]
+          if (j != i) {
+            t = list[i];                        // swap list[i] and list[j]
+            list[i] = list[j];
+            list[j] = t;
+          }
+        }
+      }
+	  
       HIGHLIGHTED_GALACTIC_MAP_CLASS = 'highlighted_map';
       NORMAL_GALACTIC_MAP_CLASS = '';
 
@@ -39,6 +52,9 @@
       var enemiesDestroyed = 0;
       var enemiesRemaining = 0;
 
+      var starbasesDestroyed = 0;
+      var starbasesRemaining = 0;
+
       var row;
       var col;
       var id;
@@ -46,6 +62,7 @@
       var galaxy;
       var quadrant;
 
+      // Note that many of the following defaults do not apply to the PLAYER ship, see replenishPlayer()
       var ship =
       {
         quadrantRow : 0,
@@ -70,13 +87,27 @@
         impulseDeltaY : 0
       };
 
+      var starbase =
+      {
+        quadrantRow : 0,
+        quadrantCol : 0,
+        //sectorRow : 0,
+        //sectorCol : 0,
+        //energy : 999999,
+        energy : 9999,
+      };
+
       var ships = [];
       var torpedos = [];
+      var starbasesList = [];
 
       var tickId = -1;
 
       var tickCounter = 0;
       var TICK_LIMIT = 10;
+
+      var starbaseTickCounter = 0;
+      var STARBASE_TICK_LIMIT = 50;
 
 
       // returns a random value between 0 and n-1
@@ -98,12 +129,19 @@
         // 10% chance of a starbase
         if ( Math.random() < 0.1 )
         {
+          var a_starbase = Object.create(starbase);
+          a_starbase.quadrantRow = row;
+          a_starbase.quadrantCol = col;
+
+          starbasesList[starbasesList.length] = a_starbase;
           starbases = 1;
         }
         else
         {
           starbases = 0;
         }
+
+        starbasesRemaining += starbases;
 
         // 0-5 stars
         stars = random0(6);
@@ -136,6 +174,10 @@
         enemiesRemaining = 0;
         enemiesDestroyed = 0;
 
+        starbasesList = [];
+        starbasesRemaining = 0;
+        starbasesDestroyed = 0;
+
         galaxy = new Array(NUM_GALAXY_ROWS);
         for (row = 0; row < galaxy.length; row++)
         {
@@ -147,7 +189,8 @@
             galaxy[row][col] = '-' + generateRandomQuadrant(row, col, difficultyLevel);
           }
         }
-      } 
+        shuffle(starbasesList); // So they won't get attacked in a predictable order...
+	  } 
 
 
       function placeItem(what)
@@ -568,6 +611,17 @@
         document.getElementById( 'destroyed' ).innerHTML = str;
       }
 
+      function showStarbases()
+      {
+        str = '00' + starbasesRemaining;
+        str = str.slice(str.length-3, str.length);
+        document.getElementById( 'starbases_remaining' ).innerHTML = str;
+
+        str = '00' + starbasesDestroyed;
+        str = str.slice(str.length-3, str.length);
+        document.getElementById( 'starbases_destroyed' ).innerHTML = str;
+      }
+
       function tryQuadrantMove(what, row, col, rowDelta, colDelta)
       {
         newRow = row + rowDelta;
@@ -637,6 +691,85 @@
         document.getElementById( 'message' ).innerHTML = message_text;
       }
 
+	  function handleStarbases()
+	  {
+        var instance;
+
+        // NOTE - although this would seem non-random, we SHUFFLED the starbaseList previously...
+        var index = 0;
+        console.log("starbasesList.length = " + starbasesList.length);
+        while (index < starbasesList.length)
+        {
+          instance = starbasesList[index];
+
+		  console.log("Processing starbase at quadrant " + instance.quadrantRow + "-" + instance.quadrantCol);
+
+		  // Determine number of enemy ships in the quadrant with the starbase
+		  var contents = galaxy[instance.quadrantRow][instance.quadrantCol];
+		  if (contents[0] === '-')
+		  {
+		    klingons = parseInt(contents[1]);
+		  }
+		  else
+		  {
+		    klingons = parseInt(contents[0]);
+		  }
+
+          if (klingons === 0)
+		  {
+		    index += 1;
+		  }
+		  else
+		  {
+
+		  // Gameplay decision - if starbases can send an SOS, they can report their quadrant contents...
+		  unhideQuadrant(instance.quadrantRow, instance.quadrantCol);
+		  
+		  // TODO - consider allowing multiple starbases to be under attack, based on difficulty level...
+
+		  // TODO - consider basing amount of damage on NUMBER of enemy ships...
+          if (instance.energy >= TORPEDO_DAMAGE)
+          {
+            instance.energy -= TORPEDO_DAMAGE;
+            informPlayer("SOS from starbase in quadrant " + instance.quadrantRow + ", " + instance.quadrantCol);
+		    return;
+          }
+          else
+          {
+            informPlayer("Starbase in quadrant " + instance.quadrantRow + ", " + instance.quadrantCol + " destroyed!");
+
+            // One less starbase in the universe
+            temp = galaxy[instance.quadrantRow][instance.quadrantCol];
+
+            count = temp.charCodeAt(1);
+            count -= 1;
+            temp = temp[0] + String.fromCharCode(count) + temp[2];
+
+            galaxy[instance.quadrantRow][instance.quadrantCol] = temp;
+
+			instance = starbasesList.pop(); // get the LAST one (possible the same one we are already working with)
+            if (index < starbasesList.length)
+            {
+              starbasesList[index] = instance; // overwrite the current one with the last one
+            } 
+
+            showMap();
+            showLrs();
+
+            starbasesDestroyed += 1;
+            starbasesRemaining -= 1;
+            showStarbases();
+			return;
+        }
+
+
+
+
+
+		  }
+		}
+	  }
+	  
       function timerTick()
       {
         tickId = setTimeout(timerTick, 100);
@@ -644,6 +777,15 @@
         // Fast processing
         moveTorpedos();
 
+		
+		// Very slow processing
+        starbaseTickCounter += 1;
+        if (starbaseTickCounter >= STARBASE_TICK_LIMIT)
+        {
+          starbaseTickCounter = 0;
+		  handleStarbases();
+        }
+		
 
         tickCounter += 1;
         if (tickCounter < TICK_LIMIT)
@@ -659,7 +801,7 @@
         // Slow processing
         if (enemiesRemaining === 0)
         {
-          informPlayer("Congratulations on a successfuly completed mission!" );
+          informPlayer("Congratulations on a successfully completed mission!" );
           return;
         }
 
@@ -733,6 +875,7 @@
         initGalaxy(difficultyLevel);
 
         showMission();
+		showStarbases();
 
         ships = []
         ships[0] = Object.create(ship);

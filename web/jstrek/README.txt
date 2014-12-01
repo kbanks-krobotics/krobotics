@@ -56,3 +56,13 @@ Fourth checkin was dated 02/25/2012
 First PLAYABLE version.
 Apparently not playable with IE (perhaps my screen resolution was different back then???)
 
+11/30/2014 - experiment in starbase vulnerability
+
+Every 5 seconds a starbase that has enemy ships in it's quadrant gets attacked.
+SOS messages are sent until the starbase is destroyed or rescued.
+
+Still TODO - starbases should be much stronger (energy = 9999 currently - the same as a ship).
+Also want to make it where starbase attacks don't occur if player ship is present.
+(Currently this would allow the SRS to get out of sync!)
+
+

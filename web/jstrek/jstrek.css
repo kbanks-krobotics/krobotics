@@ -122,6 +122,26 @@ table#mission td
   width:3ex;
 }
 
+table#starbase
+{
+  border-collapse:collapse;
+  position: absolute;
+  top: 0px;
+  left: 850px;
+}
+table#starbase caption
+{
+  border: solid black 1px;
+  color: blue
+}
+table#starbase td
+{
+  border: solid black 1px;
+  color: green;
+  text-align:center;
+  width:3ex;
+}
+
 table#status
 {
   border-collapse:collapse;

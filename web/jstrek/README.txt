@@ -66,3 +66,22 @@ Also want to make it where starbase attacks don't occur if player ship is presen
 (Currently this would allow the SRS to get out of sync!)
 
 
+12/01/2014 - finishing up starbase vulnerability
+
+Starbases now 10 x player ship energy.
+Starbase attacks now scaled by number of enemies present
+Starbase not attacked if player present (presumably you are considered a bigger threat)
+Fixed code indentation and whitespace in handleStarbase()
+Reduced player torpedos to 30 (99 is too many, 10 is too few)
+
+Gameplay issue - the attacks on starbases also reveal the starbase positions.
+Have to ponder this some more...
+
+Also feels like there should be a delay before the NEXT starbase attack when you rescue one...
+
+
+
+Other ideas:
+
+Should a clear impulse engine path be required in order to engage warp drive in a particular direction?
+If so, is trying to warp through a star a "blocker" or a "destroyer"?

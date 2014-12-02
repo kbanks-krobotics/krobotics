@@ -93,8 +93,7 @@
         quadrantCol : 0,
         //sectorRow : 0,
         //sectorCol : 0,
-        //energy : 999999,
-        energy : 9999,
+        energy : 99999, // 10 times stronger than a player ship...
       };
 
       var ships = [];
@@ -166,7 +165,7 @@
       {
         ships[0].energy = 9999;
         ships[0].shields = 0;
-        ships[0].torpedos = 99; //10;
+        ships[0].torpedos = 30; // 10 would be the standard but seems to few in this more "arcadish" version...
       }
 
       function initGalaxy(difficultyLevel)
@@ -697,12 +696,9 @@
 
         // NOTE - although this would seem non-random, we SHUFFLED the starbaseList previously...
         var index = 0;
-        console.log("starbasesList.length = " + starbasesList.length);
         while (index < starbasesList.length)
         {
           instance = starbasesList[index];
-
-		  console.log("Processing starbase at quadrant " + instance.quadrantRow + "-" + instance.quadrantCol);
 
 		  // Determine number of enemy ships in the quadrant with the starbase
 		  var contents = galaxy[instance.quadrantRow][instance.quadrantCol];
@@ -715,56 +711,55 @@
 		    klingons = parseInt(contents[0]);
 		  }
 
-          if (klingons === 0)
+          // If no klingons OR the Enterprise is present...
+          if ((klingons === 0) || ((instance.quadrantRow == ships[0].quadrantRow) && (instance.quadrantCol == ships[0].quadrantCol)))
 		  {
 		    index += 1;
 		  }
 		  else
 		  {
 
-		  // Gameplay decision - if starbases can send an SOS, they can report their quadrant contents...
-		  unhideQuadrant(instance.quadrantRow, instance.quadrantCol);
-		  
-		  // TODO - consider allowing multiple starbases to be under attack, based on difficulty level...
-
-		  // TODO - consider basing amount of damage on NUMBER of enemy ships...
-          if (instance.energy >= TORPEDO_DAMAGE)
-          {
-            instance.energy -= TORPEDO_DAMAGE;
-            informPlayer("SOS from starbase in quadrant " + instance.quadrantRow + ", " + instance.quadrantCol);
-		    return;
-          }
-          else
-          {
-            informPlayer("Starbase in quadrant " + instance.quadrantRow + ", " + instance.quadrantCol + " destroyed!");
-
-            // One less starbase in the universe
-            temp = galaxy[instance.quadrantRow][instance.quadrantCol];
-
-            count = temp.charCodeAt(1);
-            count -= 1;
-            temp = temp[0] + String.fromCharCode(count) + temp[2];
-
-            galaxy[instance.quadrantRow][instance.quadrantCol] = temp;
-
-			instance = starbasesList.pop(); // get the LAST one (possible the same one we are already working with)
-            if (index < starbasesList.length)
-            {
-              starbasesList[index] = instance; // overwrite the current one with the last one
-            } 
-
+		    // Gameplay decision - if starbases can send an SOS, they can report their quadrant contents...
+		    unhideQuadrant(instance.quadrantRow, instance.quadrantCol);
             showMap();
-            showLrs();
+		  
+		    // TODO - consider allowing multiple starbases to be under attack, based on difficulty level...
 
-            starbasesDestroyed += 1;
-            starbasesRemaining -= 1;
-            showStarbases();
-			return;
-        }
+		    // Basing amount of damage on NUMBER of enemy ships...
+		    var damage = TORPEDO_DAMAGE * klingons;
+            if (instance.energy >= damage)
+            {
+              instance.energy -= damage;
+              informPlayer("SOS from starbase in quadrant " + instance.quadrantRow + ", " + instance.quadrantCol);
+		      return;
+            }
+            else
+            {
+              informPlayer("Starbase in quadrant " + instance.quadrantRow + ", " + instance.quadrantCol + " destroyed!");
 
+              // One less starbase in the universe
+              temp = galaxy[instance.quadrantRow][instance.quadrantCol];
 
+              count = temp.charCodeAt(1);
+              count -= 1;
+              temp = temp[0] + String.fromCharCode(count) + temp[2];
 
+              galaxy[instance.quadrantRow][instance.quadrantCol] = temp;
 
+			  instance = starbasesList.pop(); // get the LAST one (possible the same one we are already working with)
+              if (index < starbasesList.length)
+              {
+                starbasesList[index] = instance; // overwrite the current one with the last one
+              } 
+
+              showMap();
+              showLrs();
+
+              starbasesDestroyed += 1;
+              starbasesRemaining -= 1;
+              showStarbases();
+			  return;
+            }
 
 		  }
 		}
